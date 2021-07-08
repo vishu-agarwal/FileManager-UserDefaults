@@ -59,6 +59,9 @@ class LoginVc: UIViewController {
         else{
             let  alert = UIAlertController(title: "Incorrect!", message: "Username and password is incorrect !", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
+            DispatchQueue.main.async {
+                self.present(alert,animated: true,completion : nil)
+            }
             
         }
     }

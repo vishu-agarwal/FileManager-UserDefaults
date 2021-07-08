@@ -39,13 +39,13 @@ class NewNotesvc: UIViewController {
     }()
     
     @objc private func saveNote(){
-        let name = FileName.text
-        let content = contentView.text
-        let filePath = service.getDocDir().appendingPathComponent("\(String(describing: name)).txt")
+        let name = FileName.text!
+        let content = contentView.text!
+        let filePath = service.getDocDir().appendingPathComponent("\(name).txt")
         //add content to file
         
         do{
-            try content?.write(to: filePath, atomically: true, encoding: .utf8)
+            try content.write(to: filePath, atomically: true, encoding: .utf8)
             let fetchContent = try String(contentsOf: filePath)
             print(fetchContent)
             
@@ -53,7 +53,7 @@ class NewNotesvc: UIViewController {
             
             FileName.text = ""
             contentView.text = ""
-            let  alert = UIAlertController(title: "Success!", message: "Your file is saved \(FileName).txt", preferredStyle: .alert)
+            let  alert = UIAlertController(title: "Success!", message: "Your file is saved \(name).txt", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: {[weak self]  _ in self?.navigationController?.popViewController(animated: true)}))
             DispatchQueue.main.async {
                 self.present(alert,animated: true,completion: nil)
@@ -70,6 +70,7 @@ class NewNotesvc: UIViewController {
         view.addSubview(FileName)
         view.addSubview(contentView)
         view.addSubview(mybtn)
+        
         
         if updatefile != ""{
             // here extract only file name separeted by dote exyension of file

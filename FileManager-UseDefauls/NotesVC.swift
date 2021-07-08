@@ -12,29 +12,43 @@ class NotesVC: UIViewController {
     
     private var notesArray = [String]()
     private let notestbl = UITableView()
-    
+    var del = ""
     // make instance
     let service = DataService()
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        title = "NOTES"
-        print(service.getDocDir())
-        
-        let additem1 = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(logoutFunc))
-        navigationItem.setRightBarButton(additem1, animated: true)
-        let additem2 = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(openNotes))
-        navigationItem.setLeftBarButton(additem2, animated: true)
-        setuptbl()
-        // Do any additional setup after loading the view.
-    }
+    
    
     @objc private func logoutFunc(){
         
         UserDefaults.standard.setValue(nil, forKey: "sessionToken")
         checkAuth()
     }
-    
+    /*
+     @objc private func saveNote(){
+     let name = FileName.text!
+     let content = contentView.text!
+     let filePath = service.getDocDir().appendingPathComponent("\(name).txt")
+     //add content to file
+     
+     do{
+     try content.write(to: filePath, atomically: true, encoding: .utf8)
+     let fetchContent = try String(contentsOf: filePath)
+     print(fetchContent)
+     
+     // check content to file
+     
+     FileName.text = ""
+     contentView.text = ""
+     let  alert = UIAlertController(title: "Success!", message: "Your file is saved \(FileName).txt", preferredStyle: .alert)
+     alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: {[weak self]  _ in self?.navigationController?.popViewController(animated: true)}))
+     DispatchQueue.main.async {
+     self.present(alert,animated: true,completion: nil)
+     }
+     }catch{
+     print(error)
+     }
+     
+     }
+ */
     // extract notes from directory
     private func fetchNotes(){
         
@@ -90,8 +104,32 @@ class NotesVC: UIViewController {
         let vc = NewNotesvc()
         navigationController?.pushViewController(vc, animated: true)
     }
-}
-extension NotesVC: UITableViewDelegate,UITableViewDataSource{
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        title = "NOTES"
+        print(service.getDocDir())
+        view.addSubview(notestbl)
+        let additem1 = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(logoutFunc))
+        navigationItem.setRightBarButton(additem1, animated: true)
+        let additem2 = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(openNotes))
+        navigationItem.setLeftBarButton(additem2, animated: true)
+        
+        
+        setuptbl()
+        fetchNotes()
+        // Do any additional setup after loading the view.
+    }}
+extension NotesVC: UITableViewDelegate,UITableViewDataSource {
+    
+    private func setuptbl(){
+        
+        notestbl.register(UITableViewCell.self, forCellReuseIdentifier: "noteCell")
+        notestbl.delegate = self
+        notestbl.dataSource = self
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return notesArray.count
     }
@@ -101,13 +139,24 @@ extension NotesVC: UITableViewDelegate,UITableViewDataSource{
         cell.textLabel?.text = notesArray[indexPath.row]
         return cell
     }
-    
-    private func setuptbl(){
+   
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        //let del = notesArray[indexPath.row]
+        if editingStyle == .delete{
+            notestbl.beginUpdates()
+                       let name =  notesArray.remove(at: indexPath.row)
+            notestbl.deleteRows(at: [indexPath], with: .fade)
+            
+            //service.getDocDir().deletingLastPathComponent("\(name).txt")
         
-        notestbl.register(UITableViewCell.self, forCellReuseIdentifier: "notesCell")
-        notestbl.delegate = self
-        notestbl.dataSource = self
+            
+            
+            notestbl.reloadData()
+            notestbl.endUpdates()
+            
+        }
     }
+   
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let vc = NewNotesvc()
         vc.updatefile = notesArray[indexPath.row]
