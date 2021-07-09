@@ -62,10 +62,10 @@
 		0BAA0B63269595B4001AE23B /* FileManager-UseDefauls */ = {
 			isa = PBXGroup;
 			children = (
-				0BAA0B762695960B001AE23B /* LoginVc.swift */,
 				0BAA0B78269598B9001AE23B /* extensions.swift */,
 				0BAA0B802695B10D001AE23B /* DataService.swift */,
 				0BAA0B7A26959D6E001AE23B /* NotesVC.swift */,
+				0BAA0B762695960B001AE23B /* LoginVc.swift */,
 				0BAA0B7C2695A070001AE23B /* NewNotesvc.swift */,
 				0BAA0B64269595B4001AE23B /* AppDelegate.swift */,
 				0BAA0B68269595B4001AE23B /* Main.storyboard */,

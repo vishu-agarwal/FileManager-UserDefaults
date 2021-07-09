@@ -142,15 +142,43 @@ extension NotesVC: UITableViewDelegate,UITableViewDataSource {
    
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         //let del = notesArray[indexPath.row]
-        if editingStyle == .delete{
+        if editingStyle == .delete
+        {
             notestbl.beginUpdates()
-                       let name =  notesArray.remove(at: indexPath.row)
+            
+           
+            //tableView.deleteRows(at: [indexPath], with: .automatic)
+           // self.notesArray.remove(at: indexPath.row)
+            let filename = notesArray[indexPath.row]
+            
+
+            let filepath = service.getDocDir().appendingPathComponent(filename)                //.deletingLastPathComponent("\(filename).txt")
+
+             let path = URL(string: filename, relativeTo: filepath)
+            
+            do
+            {
+                try FileManager.default.removeItem(at: path! )
+                let alert = UIAlertController(title: "Success !", message: "File Deleted Successfully ......", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel , handler: {[weak self]  _ in self?.navigationController?.popViewController(animated: true)}))
+                
+                DispatchQueue.main.async
+                {
+                    self.present(alert,animated: true,completion: nil)
+                }
+            }
+            catch
+            {
+                print(error)
+            }
+            /*
+            else{
+                print("not get path")
+            }
+            */
+            
+            notesArray.remove(at: indexPath.row)
             notestbl.deleteRows(at: [indexPath], with: .fade)
-            
-            //service.getDocDir().deletingLastPathComponent("\(name).txt")
-        
-            
-            
             notestbl.reloadData()
             notestbl.endUpdates()
             
